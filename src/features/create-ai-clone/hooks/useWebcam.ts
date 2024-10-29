@@ -1,5 +1,5 @@
-import { useState, useRef, useCallback, useEffect } from 'react';
-import Webcam from 'react-webcam';
+import { useState, useRef, useCallback, useEffect } from "react";
+import Webcam from "react-webcam";
 
 export const useWebcam = (onVideoRecorded: (blob: Blob) => void) => {
   const [isRecording, setIsRecording] = useState(false);
@@ -8,14 +8,19 @@ export const useWebcam = (onVideoRecorded: (blob: Blob) => void) => {
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const [videoDevices, setVideoDevices] = useState<MediaDeviceInfo[]>([]);
   const [audioDevices, setAudioDevices] = useState<MediaDeviceInfo[]>([]);
-  const [selectedVideoDevice, setSelectedVideoDevice] = useState<string>('');
-  const [selectedAudioDevice, setSelectedAudioDevice] = useState<string>('');
+  const [selectedVideoDevice, setSelectedVideoDevice] = useState<string>("");
+  const [selectedAudioDevice, setSelectedAudioDevice] = useState<string>("");
+  const [isWebcamReady, setIsWebcamReady] = useState(false);
 
   useEffect(() => {
     async function getDevices() {
       const devices = await navigator.mediaDevices.enumerateDevices();
-      const videoDevs = devices.filter(device => device.kind === 'videoinput');
-      const audioDevs = devices.filter(device => device.kind === 'audioinput');
+      const videoDevs = devices.filter(
+        (device) => device.kind === "videoinput"
+      );
+      const audioDevs = devices.filter(
+        (device) => device.kind === "audioinput"
+      );
       setVideoDevices(videoDevs);
       setAudioDevices(audioDevs);
       if (videoDevs.length) setSelectedVideoDevice(videoDevs[0].deviceId);
@@ -24,16 +29,18 @@ export const useWebcam = (onVideoRecorded: (blob: Blob) => void) => {
     getDevices();
   }, []);
 
-
   const handleStartRecording = useCallback(() => {
     setIsRecording(true);
     setRecordedChunks([]);
     if (webcamRef.current) {
       const stream = webcamRef.current.video?.srcObject as MediaStream;
       mediaRecorderRef.current = new MediaRecorder(stream, {
-        mimeType: 'video/webm',
+        mimeType: "video/webm",
       });
-      mediaRecorderRef.current.addEventListener('dataavailable', handleDataAvailable);
+      mediaRecorderRef.current.addEventListener(
+        "dataavailable",
+        handleDataAvailable
+      );
       mediaRecorderRef.current.start();
     }
   }, [webcamRef, setRecordedChunks]);
@@ -50,35 +57,41 @@ export const useWebcam = (onVideoRecorded: (blob: Blob) => void) => {
   const handleStopRecording = useCallback(() => {
     setIsRecording(false);
     if (mediaRecorderRef.current) {
-      mediaRecorderRef.current.stop();
-      mediaRecorderRef.current.onstop = () => {
-        const blob = new Blob(recordedChunks, {
-          type: mediaRecorderRef.current?.mimeType || 'video/webm;codecs=vp8,opus'
+      const chunks: Blob[] = [];
+
+      // Create a new data handler for this stop session
+      const handleData = (event: BlobEvent) => {
+        if (event.data.size > 0) {
+          chunks.push(event.data);
+        }
+      };
+
+      // Create the stop handler
+      const handleStop = () => {
+        mediaRecorderRef.current?.removeEventListener(
+          "dataavailable",
+          handleData
+        );
+        const blob = new Blob(chunks, {
+          type: "video/webm",
         });
         onVideoRecorded(blob);
       };
-    }
-  }, [mediaRecorderRef, setIsRecording, recordedChunks, onVideoRecorded]);
-  
 
-  const handleDownload = useCallback(() => {
-    if (recordedChunks.length) {
-      const blob = new Blob(recordedChunks, {
-        type: 'video/webm',
+      // Add the handlers
+      mediaRecorderRef.current.addEventListener("dataavailable", handleData);
+      mediaRecorderRef.current.addEventListener("stop", handleStop, {
+        once: true,
       });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      document.body.appendChild(a);
-      a.style.display = 'none';
-      a.href = url;
-      a.download = 'consent-video.webm';
-      a.click();
-      window.URL.revokeObjectURL(url);
-      setRecordedChunks([]);
+
+      // Stop the recording
+      mediaRecorderRef.current.stop();
     }
-  }, [recordedChunks]);
+  }, [mediaRecorderRef, onVideoRecorded]);
 
   return {
+    isWebcamReady,
+    setIsWebcamReady,
     webcamRef,
     isRecording,
     recordedChunks,
@@ -90,7 +103,6 @@ export const useWebcam = (onVideoRecorded: (blob: Blob) => void) => {
     setSelectedAudioDevice,
     handleStartRecording,
     handleStopRecording,
-    handleDownload,
     onVideoRecorded,
   };
 };
