@@ -5,6 +5,7 @@ import Webcam from "react-webcam";
 
 export const useWebcam = (onVideoRecorded: (blob: Blob) => void) => {
   const [isRecording, setIsRecording] = useState(false);
+  const [countdown, setCountdown] = useState<number | null>(null);
   const [recordedChunks, setRecordedChunks] = useState<Blob[]>([]);
   const [videoDevices, setVideoDevices] = useState<MediaDeviceInfo[]>([]);
   const [audioDevices, setAudioDevices] = useState<MediaDeviceInfo[]>([]);
@@ -41,7 +42,7 @@ export const useWebcam = (onVideoRecorded: (blob: Blob) => void) => {
     }
   }, []);
 
-  const handleStartRecording = useCallback(() => {
+  const startRecording = useCallback(() => {
     if (!webcamRef.current?.video?.srcObject) return;
 
     setIsRecording(true);
@@ -58,6 +59,20 @@ export const useWebcam = (onVideoRecorded: (blob: Blob) => void) => {
     );
     mediaRecorderRef.current.start();
   }, [handleDataAvailable]);
+
+  const handleStartRecording = useCallback(() => {
+    setCountdown(3);
+    const interval = setInterval(() => {
+      setCountdown((prev) => {
+        if (prev === 1) {
+          clearInterval(interval);
+          startRecording();
+          return null;
+        }
+        return prev ? prev - 1 : null;
+      });
+    }, 1000);
+  }, [startRecording]);
 
   const handleStopRecording = useCallback(async () => {
     if (!mediaRecorderRef.current) return;
@@ -98,6 +113,7 @@ export const useWebcam = (onVideoRecorded: (blob: Blob) => void) => {
     setIsWebcamReady,
     webcamRef,
     isRecording,
+    countdown,
     recordedChunks,
     videoDevices,
     audioDevices,
@@ -107,6 +123,5 @@ export const useWebcam = (onVideoRecorded: (blob: Blob) => void) => {
     setSelectedAudioDevice,
     handleStartRecording,
     handleStopRecording,
-    onVideoRecorded,
   };
 };

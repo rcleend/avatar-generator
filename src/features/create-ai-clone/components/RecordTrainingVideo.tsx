@@ -16,11 +16,10 @@ interface RecordTrainingVideoProps {
 const RecordTrainingVideo: React.FC<RecordTrainingVideoProps> = ({
   onVideoRecorded,
 }) => {
-  const [countdown, setCountdown] = useState<number | null>(null);
-
   const {
     isRecording,
     isWebcamReady,
+    countdown,
     webcamRef,
     videoDevices,
     audioDevices,
@@ -29,23 +28,9 @@ const RecordTrainingVideo: React.FC<RecordTrainingVideoProps> = ({
     setSelectedVideoDevice,
     setSelectedAudioDevice,
     setIsWebcamReady,
-    handleStartRecording: startRecording,
+    handleStartRecording,
     handleStopRecording,
   } = useWebcam(onVideoRecorded);
-
-  const handleStartRecording = useCallback(() => {
-    setCountdown(3);
-    const interval = setInterval(() => {
-      setCountdown((prev) => {
-        if (prev === 1) {
-          clearInterval(interval);
-          startRecording();
-          return null;
-        }
-        return prev ? prev - 1 : null;
-      });
-    }, 1000);
-  }, [startRecording]);
 
   return (
     <CardContent className="space-y-6">
@@ -148,6 +133,7 @@ const RecordTrainingVideo: React.FC<RecordTrainingVideoProps> = ({
         <WebcamComponent
           onVideoRecorded={onVideoRecorded}
           isRecording={isRecording}
+          countdown={countdown}
           onStartRecording={handleStartRecording}
           onStopRecording={handleStopRecording}
           webcamRef={webcamRef}
@@ -160,20 +146,6 @@ const RecordTrainingVideo: React.FC<RecordTrainingVideoProps> = ({
           setSelectedVideoDevice={setSelectedVideoDevice}
           setSelectedAudioDevice={setSelectedAudioDevice}
         />
-
-        {/* TODO: move to WebcamComponent */}
-        {countdown !== null && (
-          <div className="absolute inset-0 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-            <span className="text-7xl font-bold text-white">{countdown}</span>
-          </div>
-        )}
-
-        {isRecording && (
-          <div className="absolute top-4 left-4 flex items-center gap-2 bg-red-500/90 text-white px-4 py-2 rounded-full text-sm font-medium shadow-lg">
-            <div className="w-2 h-2 rounded-full bg-white animate-pulse" />
-            Recording in Progress
-          </div>
-        )}
       </div>
 
       {/* Action Button */}
