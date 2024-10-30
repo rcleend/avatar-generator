@@ -9,7 +9,7 @@ interface UploadResponse {
   error?: any;
 }
 
-export const useAIVideo = () => {
+export const useCreateAIClone = () => {
   const [currentStep, setCurrentStep] = useState<StepId>("record");
   const [videoBlob, setVideoBlob] = useState<Blob | null>(null);
   const [videoUrl, setVideoUrl] = useState<string | null>(null);
@@ -25,17 +25,13 @@ export const useAIVideo = () => {
 
   const uploadMutation = useMutation<UploadResponse, Error, Blob>({
     mutationFn: async (blob: Blob) => {
-      const formData = {
-        name: `consent-video-${Date.now()}.webm`,
-        videoBlob: blob,
-      };
+      const formData = new FormData();
+      formData.append("name", `${Date.now()}.mp4`);
+      formData.append("video", blob, `${Date.now()}.mp4`);
 
       const response = await fetch("/api/ai-video", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
+        body: formData,
       });
 
       if (!response.ok) {
@@ -70,6 +66,7 @@ export const useAIVideo = () => {
 
   return {
     currentStep,
+    setCurrentStep,
     videoUrl,
     handleVideoRecorded,
     handleConfirm,

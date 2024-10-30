@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 import { Clapperboard } from "lucide-react";
-import { useAIVideo } from "../hooks/useAIVideo";
+import { useCreateAIClone } from "../hooks/useCreateAIClone";
 import { StepDialog } from "@/components/step-dialog";
 import { STEPS } from "../config/steps";
 
@@ -12,7 +12,7 @@ const ConnectedCreateAIClone: React.FC = () => {
     handleConfirm,
     handleRecordAgain,
     videoUrl,
-  } = useAIVideo();
+  } = useCreateAIClone();
 
   const stepProps = {
     record: {
@@ -35,7 +35,6 @@ const ConnectedCreateAIClone: React.FC = () => {
           title="AI Video"
           description="Train Scripe to generate professional videos for your personal branding."
           icon={<Clapperboard className="w-6 h-6" />}
-          badge="Pro"
         />
       </div>
     </div>

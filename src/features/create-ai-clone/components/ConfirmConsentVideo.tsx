@@ -1,8 +1,10 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
+import { AlertCircle, CheckCircle2, RotateCcw, ArrowRight } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface ConfirmConsentVideoProps {
   videoUrl: string;
@@ -29,62 +31,68 @@ const ConfirmConsentVideo: React.FC<ConfirmConsentVideoProps> = ({
   };
 
   return (
-    <CardContent className="space-y-4">
-      <video
-        controls
-        src={videoUrl}
-        className="w-full rounded-lg"
-        preload="metadata"
-        playsInline
-      />
-      <div className="space-y-2">
-        <h3 className="text-lg font-semibold">
-          Confirm these consent video requirements
-        </h3>
-        <div className="grid grid-cols-2 gap-2">
-          <Checkbox
-            id="clearVoice"
-            checked={requirements.clearVoice}
-            onCheckedChange={() => handleCheckboxChange("clearVoice")}
-          />
-          <label htmlFor="clearVoice" className="text-sm">
-            Clear voice without background noise
-          </label>
+    <CardContent className="space-y-6">
+      <div className="relative aspect-video">
+        <video
+          controls
+          src={videoUrl}
+          className="w-full rounded-lg border shadow-sm"
+          preload="metadata"
+          playsInline
+        />
+      </div>
 
-          <Checkbox
-            id="headInFocus"
-            checked={requirements.headInFocus}
-            onCheckedChange={() => handleCheckboxChange("headInFocus")}
-          />
-          <label htmlFor="headInFocus" className="text-sm">
-            Head and upper body in clear focus
-          </label>
+      <div className="space-y-4">
+        <div className="flex items-center gap-2">
+          <AlertCircle className="h-5 w-5 text-primary" />
+          <h3 className="text-lg font-semibold">Confirm Video Requirements</h3>
+        </div>
 
-          <Checkbox
-            id="noHandsBlocking"
-            checked={requirements.noHandsBlocking}
-            onCheckedChange={() => handleCheckboxChange("noHandsBlocking")}
-          />
-          <label htmlFor="noHandsBlocking" className="text-sm">
-            No hands or accessories blocking your face
-          </label>
-
-          <Checkbox
-            id="clothesNotBlending"
-            checked={requirements.clothesNotBlending}
-            onCheckedChange={() => handleCheckboxChange("clothesNotBlending")}
-          />
-          <label htmlFor="clothesNotBlending" className="text-sm">
-            Clothes not blending with background
-          </label>
+        <div className="grid gap-2 rounded-lg border p-4 bg-muted/50">
+          {Object.entries(requirements).map(([key, checked]) => (
+            <div
+              key={key}
+              onClick={() =>
+                handleCheckboxChange(key as keyof typeof requirements)
+              }
+              className={cn(
+                "flex items-center gap-3 p-2 rounded-md transition-colors cursor-pointer hover:bg-primary/10",
+                checked && "bg-primary/5"
+              )}
+            >
+              <Checkbox
+                id={key}
+                checked={checked}
+                onCheckedChange={() =>
+                  handleCheckboxChange(key as keyof typeof requirements)
+                }
+                onClick={(e) => e.stopPropagation()}
+              />
+              <div className="space-y-1">
+                <p className="text-sm">
+                  {key === "clearVoice" &&
+                    "Voice is clear and free from background noise"}
+                  {key === "headInFocus" &&
+                    "Head and upper body are clearly visible and in focus"}
+                  {key === "noHandsBlocking" &&
+                    "Face is not blocked by hands or accessories"}
+                  {key === "clothesNotBlending" &&
+                    "Clothing contrasts well with the background"}
+                </p>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
-      <div className="flex justify-between">
-        <Button variant="outline" onClick={onRecordAgain}>
+
+      <div className="flex justify-between items-center pt-2">
+        <Button onClick={onRecordAgain} className="gap-2">
+          <RotateCcw className="h-4 w-4" />
           Record Again
         </Button>
-        <Button onClick={onConfirm} disabled={!allChecked}>
+        <Button onClick={onConfirm} disabled={!allChecked} className="gap-2">
           Confirm
+          <ArrowRight className="h-4 w-4" />
         </Button>
       </div>
     </CardContent>

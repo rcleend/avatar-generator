@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { Plus } from "lucide-react";
 import Link from "next/link";
 import { Card } from "@/components/ui/card";
@@ -21,13 +21,18 @@ interface AICloneGridProps {
 }
 
 const AICloneGrid: React.FC<AICloneGridProps> = ({ clones }) => {
-  const [displayCount, setDisplayCount] = useState(11);
+  const [displayCount, setDisplayCount] = useState(() =>
+    Math.min(11, clones.length)
+  );
   const [loadedVideos, setLoadedVideos] = useState<Record<string, boolean>>({});
-  const reversedClones = [...clones].reverse();
-  const displayedClones = reversedClones.slice(0, displayCount);
+
+  const displayedClones = useMemo(() => {
+    const reversedClones = [...clones].reverse();
+    return reversedClones.slice(0, displayCount);
+  }, [clones, displayCount]);
 
   const handleLoadMore = () => {
-    setDisplayCount((prev) => prev + 16);
+    setDisplayCount((prev) => Math.min(prev + 16, clones.length));
   };
 
   const handleVideoLoaded = (replicaId: string) => {
@@ -60,10 +65,7 @@ const AICloneGrid: React.FC<AICloneGridProps> = ({ clones }) => {
                   )}
                   <video
                     src={clone.thumbnail_video_url}
-                    className={cn(
-                      "w-full h-full object-cover group-hover:scale-105 transition-transform",
-                      !loadedVideos[clone.replica_id] && "opacity-0"
-                    )}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform"
                     muted
                     loop
                     playsInline
@@ -105,7 +107,7 @@ const AICloneGrid: React.FC<AICloneGridProps> = ({ clones }) => {
         ))}
       </div>
 
-      {displayCount < reversedClones.length && (
+      {displayCount < clones.length && (
         <div className="flex justify-center">
           <Button
             variant="outline"

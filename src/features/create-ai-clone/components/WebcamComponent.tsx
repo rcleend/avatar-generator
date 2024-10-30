@@ -1,35 +1,41 @@
-import React, { useState } from "react";
+import React from "react";
 import Webcam from "react-webcam";
 import DeviceSelector from "./DeviceSelector";
-import { useWebcam } from "../hooks/useWebcam";
 import { Loader2 } from "lucide-react";
 
 interface WebcamComponentProps {
   onVideoRecorded: (blob: Blob) => void;
+  isRecording: boolean;
+  onStartRecording: () => void;
+  onStopRecording: () => void;
+  webcamRef: React.RefObject<Webcam>;
+  isWebcamReady: boolean;
+  setIsWebcamReady: (ready: boolean) => void;
+  videoDevices: MediaDeviceInfo[];
+  audioDevices: MediaDeviceInfo[];
+  selectedVideoDevice: string;
+  selectedAudioDevice: string;
+  setSelectedVideoDevice: (deviceId: string) => void;
+  setSelectedAudioDevice: (deviceId: string) => void;
 }
 
-const WebcamComponent: React.FC<WebcamComponentProps> = (props) => {
-  const {
-    webcamRef,
-    isWebcamReady,
-    setIsWebcamReady,
-    isRecording,
-    recordedChunks,
-    videoDevices,
-    audioDevices,
-    selectedVideoDevice,
-    selectedAudioDevice,
-    setSelectedVideoDevice,
-    setSelectedAudioDevice,
-    handleStartRecording,
-    handleStopRecording,
-  } = useWebcam(props.onVideoRecorded);
-
+const WebcamComponent: React.FC<WebcamComponentProps> = ({
+  webcamRef,
+  isWebcamReady,
+  setIsWebcamReady,
+  videoDevices,
+  audioDevices,
+  selectedVideoDevice,
+  selectedAudioDevice,
+  setSelectedVideoDevice,
+  setSelectedAudioDevice,
+}) => {
   return (
     <div className="relative">
       <div className="relative aspect-video">
         <Webcam
           audio={true}
+          muted={true}
           ref={webcamRef}
           onUserMedia={() => setIsWebcamReady(true)}
           videoConstraints={{
@@ -62,21 +68,6 @@ const WebcamComponent: React.FC<WebcamComponentProps> = (props) => {
           onSelectDevice={setSelectedAudioDevice}
           icon="microphone"
         />
-      </div>
-      <div className="mt-4 flex justify-center">
-        <button
-          onClick={isRecording ? handleStopRecording : handleStartRecording}
-          disabled={!isWebcamReady}
-          className={`px-6 py-3 rounded-full text-sm font-medium ${
-            isRecording
-              ? "bg-red-500 text-white"
-              : isWebcamReady
-              ? "bg-blue-500 text-white hover:bg-blue-600"
-              : "bg-blue-500/50 text-white cursor-not-allowed"
-          }`}
-        >
-          {isRecording ? "Stop Recording" : "Start Recording"}
-        </button>
       </div>
     </div>
   );

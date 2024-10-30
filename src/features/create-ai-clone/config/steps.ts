@@ -1,13 +1,14 @@
 import { Step } from "@/components/step-dialog";
-import RecordConsentVideo from "../components/RecordConsentVideo";
+import RecordTrainingVideo from "../components/RecordTrainingVideo";
 import ConfirmConsentVideo from "../components/ConfirmConsentVideo";
 
 export const STEPS: Step[] = [
   {
     id: "record",
-    title: "Record Consent Video",
-    description: "Record a short video giving consent for AI training",
-    component: RecordConsentVideo,
+    title: "Record Training Video",
+    description:
+      "Record a video used to train the AI. Make sure to follow instructions in the recording script.",
+    component: RecordTrainingVideo,
   },
   {
     id: "confirm",
