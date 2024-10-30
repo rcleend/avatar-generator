@@ -14,8 +14,6 @@ export async function POST(request: Request): Promise<NextResponse> {
       throw new Error("No file uploaded");
     }
 
-    console.log("file", file);
-
     // Store the video in Vercel Blob to make uploading more robust
     // const blobResponse = await put(name, file, {
     //   access: "public",

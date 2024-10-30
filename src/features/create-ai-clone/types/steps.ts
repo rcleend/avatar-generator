@@ -6,4 +6,4 @@ export type StepConfig = {
   props?: Record<string, any>;
 };
 
-export type StepId = "record" | "upload" | "confirm" | "complete";
+export type StepId = "record" | "confirm" | "complete";
