@@ -10,3 +10,11 @@ export interface StepRendererProps<T extends Record<string, any>> {
   currentStep: string;
   stepProps: T;
 }
+
+export type StepConfig = {
+  id: string;
+  title: string;
+  description: string;
+  component: React.ComponentType<any>;
+  props?: Record<string, any>;
+};

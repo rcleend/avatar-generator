@@ -5,8 +5,8 @@ import {
   CardTitle,
   CardDescription,
 } from "@/components/ui/card";
-import type { Step, StepRendererProps } from "./types";
-import { StepRenderer } from "./StepRenderer";
+import StepRenderer from "./StepRenderer";
+import { StepRendererProps } from "./types";
 
 interface StepDialogProps<T extends Record<string, any>>
   extends StepRendererProps<T> {

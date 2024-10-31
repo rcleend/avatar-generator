@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React from "react";
 import { Plus } from "lucide-react";
 import Link from "next/link";
 import { Card } from "@/components/ui/card";
@@ -6,29 +6,20 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Replica } from "@/types/replica";
+import { useAICloneGrid } from "../hooks/useAICloneGrid";
 
 interface AICloneGridProps {
   clones: Replica[];
 }
 
 const AICloneGrid: React.FC<AICloneGridProps> = ({ clones }) => {
-  const [displayCount, setDisplayCount] = useState(() =>
-    Math.min(11, clones.length)
-  );
-  const [loadedVideos, setLoadedVideos] = useState<Record<string, boolean>>({});
-
-  const displayedClones = useMemo(() => {
-    const reversedClones = [...clones].reverse();
-    return reversedClones.slice(0, displayCount);
-  }, [clones, displayCount]);
-
-  const handleLoadMore = () => {
-    setDisplayCount((prev) => Math.min(prev + 16, clones.length));
-  };
-
-  const handleVideoLoaded = (replicaId: string) => {
-    setLoadedVideos((prev) => ({ ...prev, [replicaId]: true }));
-  };
+  const {
+    displayedClones,
+    loadedVideos,
+    displayCount,
+    handleLoadMore,
+    handleVideoLoaded,
+  } = useAICloneGrid(clones);
 
   return (
     <div className="space-y-6">
@@ -64,14 +55,7 @@ const AICloneGrid: React.FC<AICloneGridProps> = ({ clones }) => {
                     loop
                     playsInline
                     onLoadedData={() => handleVideoLoaded(clone.replica_id)}
-                    onMouseEnter={(e) => {
-                      const playPromise = e.currentTarget.play();
-                      if (playPromise !== undefined) {
-                        playPromise.catch(() => {
-                          // Auto-play was prevented or interrupted, ignoring
-                        });
-                      }
-                    }}
+                    onMouseEnter={(e) => e.currentTarget.play()}
                     onMouseLeave={(e) => {
                       const video = e.currentTarget;
                       if (video.readyState >= 2) {

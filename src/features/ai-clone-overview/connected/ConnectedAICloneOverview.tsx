@@ -8,7 +8,6 @@ import {
   CardDescription,
 } from "@/components/ui/card";
 import AICloneGrid from "../components/AICloneGrid";
-import { useQuery } from "@tanstack/react-query";
 
 interface ConnectedAICloneOverviewProps {
   initialClones: any[];
@@ -17,12 +16,6 @@ interface ConnectedAICloneOverviewProps {
 const ConnectedAICloneOverview: React.FC<ConnectedAICloneOverviewProps> = ({
   initialClones,
 }) => {
-  const { data } = useQuery({
-    queryKey: ["clones"],
-    queryFn: () => ({ data: initialClones }),
-    initialData: { data: initialClones },
-  });
-
   return (
     <div className="min-h-screen bg-background text-foreground p-6">
       <div className="max-w-7xl mx-auto space-y-6">
@@ -34,7 +27,7 @@ const ConnectedAICloneOverview: React.FC<ConnectedAICloneOverviewProps> = ({
             </CardDescription>
           </CardHeader>
         </Card>
-        <AICloneGrid clones={data?.data || []} />
+        <AICloneGrid clones={initialClones} />
       </div>
     </div>
   );

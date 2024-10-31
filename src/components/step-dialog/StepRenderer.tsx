@@ -1,15 +1,15 @@
-import React from "react";
-import type { Step } from "./types";
-
+import { StepConfig } from "./types";
 interface StepRendererProps {
-  step: Step;
-  stepProps: Record<string, any>;
+  step: StepConfig;
+  stepProps?: Record<string, any>;
 }
 
-export const StepRenderer: React.FC<StepRendererProps> = ({
+const StepRenderer: React.FC<StepRendererProps> = ({
   step,
-  stepProps,
+  stepProps = {},
 }) => {
-  const StepComponent = step.component;
-  return <StepComponent {...stepProps} />;
+  const Component = step.component;
+  return <Component {...step.props} {...stepProps} />;
 };
+
+export default StepRenderer;

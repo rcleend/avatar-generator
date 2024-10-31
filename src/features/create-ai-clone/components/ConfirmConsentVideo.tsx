@@ -1,10 +1,11 @@
 "use client";
-import React, { useState } from "react";
+import React from "react";
 import { CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { AlertCircle, CheckCircle2, RotateCcw, ArrowRight } from "lucide-react";
+import { AlertCircle, RotateCcw, ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useConfirmConsentVideo } from "../hooks/useConfirmConsentVideo";
 
 interface ConfirmConsentVideoProps {
   videoUrl: string;
@@ -17,18 +18,8 @@ const ConfirmConsentVideo: React.FC<ConfirmConsentVideoProps> = ({
   onConfirm,
   onRecordAgain,
 }) => {
-  const [requirements, setRequirements] = useState({
-    clearVoice: false,
-    headInFocus: false,
-    noHandsBlocking: false,
-    clothesNotBlending: false,
-  });
-
-  const allChecked = Object.values(requirements).every(Boolean);
-
-  const handleCheckboxChange = (requirement: keyof typeof requirements) => {
-    setRequirements((prev) => ({ ...prev, [requirement]: !prev[requirement] }));
-  };
+  const { requirements, allChecked, handleCheckboxChange } =
+    useConfirmConsentVideo();
 
   return (
     <CardContent className="space-y-6">
