@@ -24,7 +24,6 @@ const EditVideoScript: React.FC<EditVideoScriptProps> = ({
   return (
     <CardContent className="space-y-6">
       <div className="space-y-4">
-        <h2 className="text-lg font-semibold">Original Video</h2>
         <video
           src={replicaDetails.thumbnail_video_url}
           controls

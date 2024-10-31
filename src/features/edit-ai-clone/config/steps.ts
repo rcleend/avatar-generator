@@ -13,7 +13,8 @@ export const STEPS: Step[] = [
   {
     id: "download",
     title: "Download Generated Video",
-    description: "Your video has been generated and is ready for download",
+    description:
+      "Your video is being generated and should soon be ready for download",
     component: DownloadVideo,
   },
 ];
