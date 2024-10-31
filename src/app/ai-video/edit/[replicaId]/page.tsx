@@ -21,12 +21,10 @@ async function fetchReplicaDetails(replicaId: string) {
   return response.json();
 }
 
-export default async function EditAIClonePage({
-  params,
-}: {
-  params: { replicaId: string };
+export default async function EditAIClonePage(props: {
+  params: Promise<{ replicaId: string }>;
 }) {
-  const { replicaId } = await params;
+  const { replicaId } = await props.params;
   const replicaDetails = await fetchReplicaDetails(replicaId);
 
   if (!replicaDetails) {
