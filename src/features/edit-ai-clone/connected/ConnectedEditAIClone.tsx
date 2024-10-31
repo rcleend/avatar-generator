@@ -4,8 +4,8 @@ import React from "react";
 import { Clapperboard } from "lucide-react";
 import { StepDialog } from "@/components/step-dialog";
 import { Replica } from "@/types/replica";
-import { useEditAIClone } from "../hooks/useEditAIClone";
 import { STEPS } from "../config/steps";
+import { useEditAIClone } from "../hooks/useEditAIClone";
 
 interface ConnectedEditAICloneProps {
   initialReplicaDetails: Replica;
@@ -14,22 +14,7 @@ interface ConnectedEditAICloneProps {
 const ConnectedEditAIClone: React.FC<ConnectedEditAICloneProps> = ({
   initialReplicaDetails,
 }) => {
-  const [currentStep, setCurrentStep] = React.useState("edit");
-  const { handleGenerateVideo, isGenerating, generatedVideo } = useEditAIClone(
-    initialReplicaDetails.replica_id,
-    () => setCurrentStep("download")
-  );
-
-  const stepProps = {
-    edit: {
-      replicaDetails: initialReplicaDetails,
-      onGenerateVideo: handleGenerateVideo,
-      isGenerating,
-    },
-    download: {
-      videoId: generatedVideo?.video_id,
-    },
-  };
+  const { currentStep, stepProps } = useEditAIClone(initialReplicaDetails);
 
   return (
     <div className="min-h-screen bg-background text-foreground p-6">

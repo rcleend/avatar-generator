@@ -9,14 +9,12 @@ interface VideoStatus {
 }
 
 export const useCheckVideoStatus = (videoId: string) => {
-  console.log("videoId", videoId);
   const { toast } = useToast();
   const enabled = Boolean(videoId);
 
   const { data, error, isLoading } = useQuery({
     queryKey: ["videoStatus", videoId],
     queryFn: async (): Promise<VideoStatus> => {
-      console.log("videoId", videoId);
       const response = await fetch(`/api/ai-video?videoId=${videoId}`);
       if (!response.ok) {
         throw new Error("Failed to check video status");

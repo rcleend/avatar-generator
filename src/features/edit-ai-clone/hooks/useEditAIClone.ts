@@ -1,6 +1,8 @@
 "use client";
 
+import { Replica } from "@/types/replica";
 import { useMutation } from "@tanstack/react-query";
+import { useState } from "react";
 
 interface GenerateVideoResponse {
   video_id: string;
@@ -12,7 +14,9 @@ interface GenerateVideoVariables {
   replicaId: string;
 }
 
-export const useEditAIClone = (replicaId: string, onSuccess?: () => void) => {
+export const useEditAIClone = (initialReplicaDetails: Replica) => {
+  const [currentStep, setCurrentStep] = useState("edit");
+
   const generateVideoMutation = useMutation<
     GenerateVideoResponse,
     Error,
@@ -34,15 +38,31 @@ export const useEditAIClone = (replicaId: string, onSuccess?: () => void) => {
       return response.json();
     },
     onSuccess: () => {
-      onSuccess?.();
+      setCurrentStep("download");
     },
   });
 
   const handleGenerateVideo = async (script: string) => {
-    generateVideoMutation.mutate({ script, replicaId });
+    generateVideoMutation.mutate({
+      script,
+      replicaId: initialReplicaDetails.replica_id,
+    });
+  };
+
+  const stepProps = {
+    edit: {
+      replicaDetails: initialReplicaDetails,
+      onGenerateVideo: handleGenerateVideo,
+      isGenerating: generateVideoMutation.isPending,
+    },
+    download: {
+      videoId: generateVideoMutation.data?.video_id,
+    },
   };
 
   return {
+    currentStep,
+    stepProps,
     handleGenerateVideo,
     isGenerating: generateVideoMutation.isPending,
     generatedVideo: generateVideoMutation.data,
