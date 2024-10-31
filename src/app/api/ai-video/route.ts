@@ -1,21 +1,35 @@
-import "server-only";
-import { z } from "zod";
+import { NextResponse } from "next/server";
 
-export const dynamic = "force-dynamic";
+export async function GET(request: Request) {
+  const { searchParams } = new URL(request.url);
+  const videoId = searchParams.get("videoId");
 
-const schema = z.object({
-  videoBlob: z.instanceof(Blob),
-});
+  if (!videoId) {
+    return NextResponse.json(
+      { error: "Video ID is required" },
+      { status: 400 }
+    );
+  }
 
-export async function PUT(request: Request) {
   try {
-    const { videoBlob } = schema.parse(await request.json());
-    
-    return Response.json({ success: true });
-  } catch (error: unknown) {
-    if (error instanceof z.ZodError) {
-      return Response.json({ success: false, error: error.issues }, { status: 400 });
+    const response = await fetch(`https://tavusapi.com/v2/videos/${videoId}`, {
+      method: "GET",
+      headers: {
+        "x-api-key": process.env.TAVUS_API_KEY || "",
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch video status");
     }
-    return Response.json({ success: false, error: "Something went wrong" }, { status: 500 });
+
+    const data = await response.json();
+    return NextResponse.json(data);
+  } catch (error) {
+    console.error("Error fetching video status:", error);
+    return NextResponse.json(
+      { error: "Failed to fetch video status" },
+      { status: 500 }
+    );
   }
 }

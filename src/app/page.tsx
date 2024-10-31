@@ -1,8 +1,5 @@
-import ConnectedAIVideo from "@/features/ai-video/connected/ConnectedAIVideo";
+import { redirect } from "next/navigation";
 
 export default function Home() {
-  // TODO: get data here
-  return (
-    <ConnectedAIVideo />
-  );
+  redirect("/ai-video");
 }
