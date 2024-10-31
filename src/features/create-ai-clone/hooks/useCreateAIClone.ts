@@ -29,7 +29,7 @@ export const useCreateAIClone = () => {
       formData.append("name", `${Date.now()}.mp4`);
       formData.append("video", blob, `${Date.now()}.mp4`);
 
-      const response = await fetch("/api/ai-video", {
+      const response = await fetch("/api/ai-video/create", {
         method: "POST",
         body: formData,
       });

@@ -5,19 +5,10 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Skeleton } from "@/components/ui/skeleton";
-
-interface AIClone {
-  replica_id: string;
-  replica_name: string;
-  thumbnail_video_url: string;
-  training_progress: string;
-  status: string;
-  created_at: string;
-  replica_type: string;
-}
+import { Replica } from "@/types/replica";
 
 interface AICloneGridProps {
-  clones: AIClone[];
+  clones: Replica[];
 }
 
 const AICloneGrid: React.FC<AICloneGridProps> = ({ clones }) => {
@@ -54,7 +45,10 @@ const AICloneGrid: React.FC<AICloneGridProps> = ({ clones }) => {
         </Link>
 
         {displayedClones.map((clone) => (
-          <Link key={clone.replica_id} href={`/clones/${clone.replica_id}`}>
+          <Link
+            key={clone.replica_id}
+            href={`/ai-video/edit/${clone.replica_id}`}
+          >
             <Card className="group relative aspect-video overflow-hidden">
               {clone.thumbnail_video_url ? (
                 <>
