@@ -5,7 +5,7 @@ import { Clapperboard } from "lucide-react";
 import { StepDialog } from "@/components/step-dialog";
 import { Replica } from "@/types/replica";
 import { useEditAIClone } from "../hooks/useEditAIClone";
-import { STEPS } from "@/features/create-ai-clone/config/steps";
+import { STEPS } from "../config/steps";
 
 interface ConnectedEditAICloneProps {
   initialReplicaDetails: Replica;
@@ -27,7 +27,7 @@ const ConnectedEditAIClone: React.FC<ConnectedEditAICloneProps> = ({
       isGenerating,
     },
     download: {
-      generatedVideo,
+      videoId: generatedVideo?.video_id,
     },
   };
 

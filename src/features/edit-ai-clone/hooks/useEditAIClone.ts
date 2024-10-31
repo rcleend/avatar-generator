@@ -3,6 +3,7 @@
 import { useMutation } from "@tanstack/react-query";
 
 interface GenerateVideoResponse {
+  video_id: string;
   hosted_url: string;
 }
 
